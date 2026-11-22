@@ -1,0 +1,1 @@
+{"Version":"2012-10-17","Statement":[{"Sid":"DynamoDBExpenseAccess","Effect":"Allow","Action":["dynamodb:PutItem","dynamodb:GetItem","dynamodb:Query","dynamodb:DeleteItem"],"Resource":"arn:aws:dynamodb:ap-southeast-2:134911380977:table/Expenses"}]}

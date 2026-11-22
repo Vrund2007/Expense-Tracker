@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <span class="brand-icon">₹</span>
+        <h1 class="brand-title">ExpenseTracker</h1>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" id="nav-tabs">
+        <button class="nav-tab active" data-target="dashboard-section">
+          <span class="tab-icon">📊</span> Dashboard
+        </button>
+        <button class="nav-tab" data-target="add-expense-section">
+          <span class="tab-icon">➕</span> Add Expense
+        </button>
+        <button class="nav-tab" data-target="history-section">
+          <span class="tab-icon">📜</span> History
+        </button>
+      </nav>
+
+      <!-- User Status & Auth Buttons -->
+      <div class="user-auth-panel" id="user-auth-panel">
+        <span class="user-email" id="user-display">Guest Mode</span>
+        <button class="btn btn-outline" id="auth-action-btn">Sign In</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner -->
+  <div class="notification-container" id="notification-box" style="display: none;">
+    <span id="notification-message"></span>
+    <button class="notification-close" id="notification-close">&times;</button>
+  </div>
+
+  <!-- AWS Mode / Local Mode Status Notice -->
+  <div class="mode-banner" id="mode-banner">
+    <span class="badge badge-purple" id="mode-badge">Status</span>
+    <span id="mode-text">Connecting to backend...</span>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+
+    <!-- ========================================== -->
+    <!-- SECTION A: DASHBOARD                       -->
+    <!-- ========================================== -->
+    <section class="app-section active" id="dashboard-section">
+      <div class="section-header">
+        <h2>Dashboard Overview</h2>
+        <p class="section-subtext">Summary of your spending habits and recent transactions.</p>
+      </div>
+
+      <!-- Summary Stat Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">This Month's Spending</span>
+            <span class="stat-icon-bg">📅</span>
+          </div>
+          <div class="stat-value" id="stat-month-total">₹0.00</div>
+          <div class="stat-footnote" id="stat-month-name">Current calendar month</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Total Transactions</span>
+            <span class="stat-icon-bg">📝</span>
+          </div>
+          <div class="stat-value" id="stat-transaction-count">0</div>
+          <div class="stat-footnote">Recorded expenses count</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">All-Time Spending</span>
+            <span class="stat-icon-bg">💳</span>
+          </div>
+          <div class="stat-value" id="stat-alltime-total">₹0.00</div>
+          <div class="stat-footnote">Lifetime total expenditure</div>
+        </div>
+      </div>
+
+      <!-- Recent Expenses Section -->
+      <div class="card recent-expenses-card">
+        <div class="card-header">
+          <h3>Recent Expenses</h3>
+          <button class="btn-link" id="view-all-btn">View All &rarr;</button>
+        </div>
+        <div class="card-body">
+          <div class="recent-list" id="recent-expenses-list">
+            <div class="empty-state">No recent expenses found. Click <strong>Add Expense</strong> to get started!</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION B: ADD EXPENSE                     -->
+    <!-- ========================================== -->
+    <section class="app-section" id="add-expense-section">
+      <div class="section-header">
+        <h2>Add New Expense</h2>
+        <p class="section-subtext">Record a single expenditure with category and date details.</p>
+      </div>
+
+      <div class="card form-card">
+        <form id="add-expense-form">
+          <div class="form-group">
+            <label for="expense-title">Expense Title <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="expense-title" 
+              name="title" 
+              placeholder="e.g., Grocery Shopping, Metro Card, College Books" 
+              required 
+              maxlength="100" 
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expense-amount">Amount (₹) <span class="required">*</span></label>
+              <div class="input-with-symbol">
+                <span class="currency-symbol">₹</span>
+                <input 
+                  type="number" 
+                  id="expense-amount" 
+                  name="amount" 
+                  placeholder="0.00" 
+                  min="0.01" 
+                  step="any" 
+                  required 
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="expense-category">Category <span class="required">*</span></label>
+              <select id="expense-category" name="category" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Education">Education</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="expense-date">Expense Date <span class="required">*</span></label>
+            <input type="date" id="expense-date" name="date" required />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-submit-expense">
+              Add Expense
+            </button>
+            <button type="reset" class="btn btn-secondary" id="btn-reset-expense">
+              Clear Form
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION C: EXPENSE HISTORY                 -->
+    <!-- ========================================== -->
+    <section class="app-section" id="history-section">
+      <div class="section-header">
+        <h2>Expense History</h2>
+        <p class="section-subtext">Comprehensive list of all your recorded transactions.</p>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-responsive">
+          <table class="expense-table" id="expense-history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th class="text-right">Amount (₹)</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr>
+                <td colspan="5" class="empty-state">Loading expenses...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- COGNITO AUTH MODAL                         -->
+  <!-- ========================================== -->
+  <div class="modal-backdrop" id="auth-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Sign In</h3>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tab-login">Login</button>
+        <button class="modal-tab" id="tab-register">Register</button>
+        <button class="modal-tab" id="tab-confirm" style="display: none;">Verify Code</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Login Form -->
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" placeholder="name@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="btn-login-submit">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" style="display: none;">
+          <div class="form-group">
+            <label for="register-email">Email Address</label>
+            <input type="email" id="register-email" placeholder="name@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" placeholder="At least 8 chars (e.g. Pass@123)" required minlength="8" />
+            <small class="helper-text">Must contain at least 8 characters with numbers & uppercase</small>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="btn-register-submit">Create Account</button>
+        </form>
+
+        <!-- Confirm Signup Form -->
+        <form id="confirm-form" style="display: none;">
+          <p class="modal-notice">Enter the 6-digit confirmation code sent to your email.</p>
+          <div class="form-group">
+            <label for="confirm-email">Email Address</label>
+            <input type="email" id="confirm-email" readonly />
+          </div>
+          <div class="form-group">
+            <label for="confirm-code">Verification Code</label>
+            <input type="text" id="confirm-code" placeholder="123456" required maxlength="10" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="btn-confirm-submit">Confirm Account</button>
+        </form>
+
+        <div class="demo-mode-option">
+          <div class="divider"><span>OR</span></div>
+          <button type="button" class="btn btn-outline btn-block" id="btn-guest-mode">
+            Continue in Local Demo Mode
+          </button>
+          <small class="helper-text text-center">Allows testing offline/locally without AWS Cognito credentials</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>Serverless Personal Expense Tracker &bull; Built with AWS (S3, API Gateway, Lambda, DynamoDB, Cognito)</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
